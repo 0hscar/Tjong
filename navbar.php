@@ -1,9 +1,9 @@
 <nav>
     <!-- Logo och meny finns i nav -->
     <ul>
-        <a href="home/">Home</a>
-        <a href="projekt1/">Projekt 1</a>
-        <a href="projekt2/">Projekt 2</a>
+        <a href="home/">Home (Don't Click)</a>
+        <a href="projekt1/">Projekt 1 (Don't Click)</a>
+        <a href="projekt2/">Projekt 2 (Don't Click)</a>
     </ul>
 </nav>
 <script>

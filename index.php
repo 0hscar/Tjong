@@ -9,7 +9,7 @@ include "functions.php"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Joels JS Demo</title>
+    <title>JW Backend</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -23,24 +23,20 @@ include "functions.php"
         <article>
             <h1>Projekt 1</h1>
             <p>Här kommer uppgifterna!</p>
-            <p>Pull innan Push!</p>
         </article>
 
         <article>
             <h2>Uppgift 1</h2>
-        </article>
+        
 
         <?php
-print(3 + 6);
+
 // Uppg 1 - Superglobals
-// phpinfo(); - sök efter uppg 1 info
 print($_SERVER['REMOTE_USER']);
 $serverPort = $_SERVER['SERVER_PORT'];
-// Konkatenering med punkt, märk att PHP kod producerar HTML resurser
 print("<p>Servern snurrar på port :" . $serverPort . "</p>");
-//phpinfo();
 ?>
-
+</article>
 
         <article>
             <h2>Uppg 2</h2>
@@ -49,14 +45,11 @@ print("<p>Servern snurrar på port :" . $serverPort . "</p>");
 print("<p> Det är den " . date("d") . " idag</p>");
 print("<p> Klockan är " . date("h:i:s") . " just nu</p>");
 print("<p> Det är den " . date("m") . "nde månaden idag </p>");
-// TODO: Skapa en array av månaderna och välj den nuvarande
 $manader = array("Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December");
-// Hur kan vi använda 01 från date("m") som index?
 $manad = date("m");
-// Tyvärr verkar $manad vara en sträng inte en nummer
-// Type cast str till int:
 $manadInt = (int) $manad;
-print("<p> På svenska heter den månaden: " . $manader[$manadInt]);
+print("<p> På svenska heter den månaden: " . $manader[$manadInt - 1]);
+
 ?>
 
         </article>
@@ -66,13 +59,27 @@ print("<p> På svenska heter den månaden: " . $manader[$manadInt]);
             <form action="index.php" method="get">
                 Dag: <input type="text" name="dag"> <br>
                 Månad: <input type="text" name="manad"> <br>
+                Year: <input type="text" name="year"> <br>
+
                 <input type="submit">
 
             </form>
             <?php
-// Kom åt GET data från UTLen
 $dag = $_GET["dag"];
-print("Du vill veta hur länge det är till " . $_GET["dag"]);
+$month = $_GET["manad"];
+$year = $_GET["year"];
+
+$d1=strtotime($dag."-".$month."-".$year);
+$d2=ceil(($d1-time())/60/60/24);
+$dSeconds=ceil(($d1-time()));
+$dMinutes=ceil(($d1-time())/60);
+$dHours=ceil(($d1-time())/60/60);
+print("There are " .$d2. " days until " .$dag.".". $month. ":". $year. "</br>") ;
+print("Seconds to date: " .$dSeconds. "</br>");
+print("Minutes to date: " .$dMinutes. "</br>");
+print("Hours to date: " .$dHours. "</br>");
+
+
 ?>
 
         </article>
@@ -82,14 +89,40 @@ print("Du vill veta hur länge det är till " . $_GET["dag"]);
             <form action="index.php" method="get">
                 Användarnamn: <input type="text" name="username"><br>
                 Email: <input type="text" name="email"><br>
-                <input type="submit" value="Registrera dig!">
+                <input type="submit" name="submitMail">
             </form>
-            <?php
-        if (isset($_REQUEST['username'])&& isset($_REQUEST['email'])){
-            $username = test_input( $_GET['username']);
-            print($username);
+<?php        
+
+// uppgift 4
+function randomPassword() {
+    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $pass = array(); 
+    $alphaLength = strlen($alphabet) - 1; 
+    for ($i = 0; $i < 8; $i++) {
+        $n = rand(0, $alphaLength);
+        $pass[] = $alphabet[$n];
+    }
+    return implode($pass);
+}
+ 
+function sendMail(){
+    if(isset($_POST['submitMail'])){
+    $to = $_POST["email"];
+    $subject = "Login password";
+    $txt = "Din password: ".randomPassword();
+    $headers = "From: tjongmannen@gmail.com";
+
+        if(mail($to,$subject,$txt,$headers)) {
+            echo "Email Sent";
         }
-        ?>
+        else {
+            echo "failed";
+        }
+    }   
+}
+sendMail();
+
+?>
         </article>
 
         <article>
@@ -97,13 +130,24 @@ print("Du vill veta hur länge det är till " . $_GET["dag"]);
             <?php
 // Uppgi - 5 Ge användaren en cookie
 $cookie_name = "username";
-$cookie_value = "Spöket Laban";
-setcookie($cookie_name, $cookie_value, time() + (86400 * 2), "/");
+$cookie_value = "Spöket Laban";    
+$cookie_date = date("d-m-Y H:i:s");
 
-// Kolla ifall användaren har en cookie
-if( isset($_COOKIE["username"]) ) {
-    print("<p> Välkommen " . $cookie_value . "!</p>");
+    
+function createCookie(){
+    setcookie($cookie_name, $cookie_value, $cookie_date, time() + (86400 * 2), "/");
 }
+// if(isset($_COOKIE["username"])){
+createCookie();
+if($cookie_name= ""){
+    createCookie();
+}
+else{
+    print("<p> Välkommen " . $cookie_value . "!</p>");
+    print($cookie_date);
+}
+
+
 ?>
         </article>
 
@@ -120,19 +164,19 @@ if( isset($_COOKIE["username"]) ) {
         $login = test_input($_GET["login"]);
         $password = test_input($_GET["password"]);
 
-        if ($login == "Joel") {
+        if ($login == "Admin") {
             // "Sessionen abc123 == $_SESSION['user'] = Joel"
-            $_SESSION['user'] = "Joel";
-            print("<p>Endast Joel har tillgång till Dark Web</p>");
+            $_SESSION['user'] = "Admin";
+            print("<p>Endast Admin har tillgång till Dark Web</p>");
             print("<a href='darkweb.php'>DARK WEB</a>");
         }
         else if ($login == "skurk") {
             $_SESSION['user'] = "skurk";
-            print("<p> Hej skurk, du har inte tillgång till </p>");
-            print("<a href='darkweb.php'>DARK WEB</a>");
-        }
-        else {
-            print("<p>Inga hemlisar för skurkar</p>");
+            print("<p> Hej skurk, du har inte tillgång till DARKWEB</p>");
+        //  print("<a href='darkweb.php'>DARK WEB</a>");
+        //}
+        //else {
+        // print("<p>Inga hemlisar för skurkar</p>");
         }
         
         ?>
@@ -143,8 +187,41 @@ if( isset($_COOKIE["username"]) ) {
             <form action="upload.php" method="post" enctype="multipart/from-data">
             Select image to upload:
             <input type="file" name="fileToUpload" id="fileToUpload">
-            <input type="sumbit" value="Upload Image" name="submit">
+            <input type="submit" value="Upload Image" name="submit">
             </form>
+
+            <form action="" method="POST" enctype="multipart/form-data">
+                <input type="file" name="image" />
+                <input type="submit"/>
+            </form>
+            <?php
+   if(isset($_FILES['image'])){
+      $errors= array();
+      $file_name = $_FILES['image']['name'];
+      $file_size =$_FILES['image']['size'];
+      $file_tmp =$_FILES['image']['tmp_name'];
+      $file_type=$_FILES['image']['type'];
+      $file_ext=strtolower(end(explode('.',$_FILES['image']['name'])));
+      
+      $extensions= array("jpeg","jpg","png");
+      
+      if(in_array($file_ext,$extensions)=== false){
+         $errors[]="extension not allowed, please choose a JPEG or PNG file.";
+      }
+      
+      if($file_size > 2097152){
+         $errors[]='File size must be excately 2 MB';
+      }
+      
+      if(empty($errors)==true){
+         move_uploaded_file($file_tmp,"images/".$file_name);
+        //  print("<img src=""></img>"); Kom ej underfund med hur man får det att fungera 
+         echo "Success";
+      }else{
+         print_r($errors);
+      }
+   }
+?>
             
         </article>
 
@@ -153,16 +230,41 @@ if( isset($_COOKIE["username"]) ) {
         <?php
         // TODO: Hitta användaren i $_SERVER och skriv in den
         // TODO: Frormatera tiden i nåt mänskligt format
-        $myfile = fopen("besok.log", "a+") or die("Unable to open file!");
-        fwrite($myfile, "Joel var här kl " . time(). "\n");
-        fclose($myfile);
-        ?>
+        // $myfile = fopen("besok.log", "a+") or die("Unable to open file!");
+        // fwrite($myfile, "Admin var här kl " . time(). "\n");
+        // fclose($myfile); 
+        //Att inte ha denhä kod snutten som en kommentar söndra alltig efter den så hela rapporten försvann
+        // ?>
+        </article>
+       
+        <article>
+         <h2>Uppg 9 - Gästboken</h2>
         </article>
 
+        
+            <article>
+            <h2>Raporten</h2>
+            <p>Uppgift 1 - Första uppgiften var inte särskilt krävande, följde man med på lektionen fick man i stortsätt uppgiften gratis.</p>
+            <p>Uppgift 2 - Andra uppgifter var ganska simpel och rakt på sak. Viktigaste att komma ihåg att arrayn startar från 0 så det förklarar den lilla -1. </p>
+            <p>Uppgift 3 - Trejde uppgiften, formuläret så hade man en rätt bra grund på om man följt med på lektionerna. Vi hade lite svårigheter med att få
+            datumen kopplade till vår form utan att få ut printat -18666. Vi löste de med att märka att vi hade syntaxerna fel för variablerna i formeln. Då vi korrigerade den delen så fungerade fromuläret. </p>
+            <p>Uppgift 4 - Fyran var lite yrsel att få den att inte skicka nya mail varje page refresh men problemet löste sig efter lite svett och tårar. Skapade en ny gmail så vi inte behövde sätta egen email. 
+            En password generator som har alla stora och små bokstäver samt nummror i en array varav det vals på måfå. </p>
+            <p>Uppgift 5 - Ett liknande sätt som i javascript men i php format. Gjorde de lite råddigt när man plötsligt börja skriva js kod utan att märka det.  </p>
+            <p>Uppgift 6 - PHP Sessions uppgiften blev lite halv färdig man slipper ändast till darkweb.php som Admin och lösen 'Password' Skurken slipper inte inn via darkweb.php linken
+            men man kan tyvärr bara lägga in webbadressen så får man access till Webbplatsen. Försökte använda mig av SESSION RESTRICTION men det lyckades inte :/ </p>
+            <p>Uppgift 7 - Ladda upp en fil till servern hade vi strul med... Vi gjorde som TODO sade och pastade in ett upload file script men ingen av bilderna fungerade i sriptet
+            Vi har 2 stycken olika formulär men ingen av dem tycktes fungera så uppgiften blev lite övermäktig så den lämnades på hälft.</p>
+            <p>Uppgift 8 - Vi hade problem med stor del av användningen av andra php filer som vi inte lyckades få att fungera. Från "file not found" till att sidan crasha höll vi på med en god stund tills det gav oss huvudvärk så vi lämnade det så.</p>
+            <p>Uppgift 9 - Som i tidigare uppgift t.ex uppfigt 8 så har vi haft strul med att ta del av andra PHP filer så denna uppgift blev till ingenting.</p>
+            <p> Oscar Weber & Joel Hellström</p>
+            
+        </article>
     </div>
 </body>
 
-<!-- Script kan köras efter att sidan laddats in -->
 <script src="script.js"></script>
 
 </html>
+
+   

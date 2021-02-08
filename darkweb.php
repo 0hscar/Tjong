@@ -11,8 +11,8 @@ session_start();
     //print_r($_SESSION);
     print("<br>Användaren: " . $_SESSION['user']);
     
-    // TODO: Visa en text endas om $_SESSION['user'] == "Joel"
-    if ($_SESSION['user'] == "Joel") {
+    // TODO: Visa en text endas om $_SESSION['user'] == "Admin"
+    if ($_SESSION['user'] == "Admin") {
         print("<p>Mitt lösenord är Superhemlis</p>");
 }
     // TODO: Annars, styr användaren till loginsidan (index.php)
