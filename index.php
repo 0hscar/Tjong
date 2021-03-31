@@ -34,7 +34,14 @@ include "functions.php"
 // Uppg 1 - Superglobals
 print($_SERVER['REMOTE_USER']);
 $serverPort = $_SERVER['SERVER_PORT'];
+$userIP = $_SERVER['REMOTE_ADDR'];
+$servername = $_SERVER['SERVER_NAME'];
+$serverapache = $_SERVER['SERVER_SOFTWARE'];
 print("<p>Servern snurrar på port :" . $serverPort . "</p>");
+print("<p>Din IP är :" .$userIP . "</p>");
+print("<p>Server namnet är :" .$servername . "</p>");
+print("<p>Server apache :" .$serverapache . "</p>");
+
 ?>
 </article>
 
@@ -43,8 +50,10 @@ print("<p>Servern snurrar på port :" . $serverPort . "</p>");
             <?php
 // Uppgift 2 - Tid och Datum
 print("<p> Det är den " . date("d") . " idag</p>");
-print("<p> Klockan är " . date("h:i:s") . " just nu</p>");
+print("<p> Klockan är " . date("H:i:s") . " just nu</p>");
 print("<p> Det är den " . date("m") . "nde månaden idag </p>");
+print("<p> Datum : " .date('d-m-Y H:i:s'));
+print("<p> Veckodag :" .date("l"));
 $manader = array("Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December");
 $manad = date("m");
 $manadInt = (int) $manad;
