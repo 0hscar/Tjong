@@ -54,6 +54,11 @@ print("<p> Klockan är " . date("H:i:s") . " just nu</p>");
 print("<p> Det är den " . date("m") . "nde månaden idag </p>");
 print("<p> Datum : " .date('d-m-Y H:i:s'));
 print("<p> Veckodag :" .date("l"));
+$ddate = date('d-m-Y');
+$date = new DateTime($ddate);
+$week = $date->format('W');
+print("<p> Vecka: " .$week );
+
 $manader = array("Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December");
 $manad = date("m");
 $manadInt = (int) $manad;
@@ -66,9 +71,9 @@ print("<p> På svenska heter den månaden: " . $manader[$manadInt - 1]);
         <article>
             <h2>Uppgift 3</h2>
             <form action="index.php" method="get">
-                Dag: <input type="text" name="dag"> <br>
-                Månad: <input type="text" name="manad"> <br>
-                Year: <input type="text" name="year"> <br>
+                Dag: <input type="number" name="dag"> <br>
+                Månad: <input type="number" name="manad"> <br>
+                Year: <input type="number" name="year"> <br>
 
                 <input type="submit">
 
@@ -78,15 +83,54 @@ $dag = $_GET["dag"];
 $month = $_GET["manad"];
 $year = $_GET["year"];
 
-$d1=strtotime($dag."-".$month."-".$year);
-$d2=ceil(($d1-time())/60/60/24);
-$dSeconds=ceil(($d1-time()));
-$dMinutes=ceil(($d1-time())/60);
-$dHours=ceil(($d1-time())/60/60);
-print("There are " .$d2. " days until " .$dag.".". $month. ":". $year. "</br>") ;
-print("Seconds to date: " .$dSeconds. "</br>");
-print("Minutes to date: " .$dMinutes. "</br>");
-print("Hours to date: " .$dHours. "</br>");
+
+
+if ($month >= 1 && $month <= 12){
+    //print($month ."</br>" .$dag. "</br>" .$year. "</br></br>"); Error check
+    if (($month == 1 || $month == 3 || $month == 5 || $month == 7 || $month == 8 || $month == 10 || $month == 12) && ($dag >= 1 && $dag <= 31)){
+        printTimes($dag, $month, $year);
+    }
+    elseif (($month == 4 || $month == 6 || $month == 9 || $month == 11) && ($dag >= 1 && $dag <= 30)) {
+        printTimes($dag, $month, $year);
+    }
+    elseif (($month == 2) && ($dag >= 1 && $dag <= 28)){
+        printTimes($dag, $month, $year); 
+    }
+    else{
+        print("Not a valid day for said month");
+    }
+
+}
+else{
+    print("Not a valid month!");
+}
+
+
+function printTimes($dag, $month, $year){
+    $d1=strtotime($dag."-".$month."-".$year);
+    $d2=ceil(($d1-time())/60/60/24);
+    $dSeconds=ceil(($d1-time()));
+    $dMinutes=ceil(($d1-time())/60);
+    $dHours=ceil(($d1-time())/60/60);
+    
+    if($dHours < 0){
+    //print("Less than 0 </br>");
+    print("It was " .$d2*(-1). " days since " .$dag. "." .$month. ":" .$year. "</br>");
+    print("Seconds since date: " .$dSeconds*(-1). "</br>");
+    print("Minutes since date: " .$dMinutes*(-1). "</br>");
+    print("Hours since date: " .$dHours*(-1). "</br>");
+    //print($d2);
+}
+    else {
+    print("There are " .$d2. " days until " .$dag.".". $month. ":". $year. "</br>") ;
+    print("Seconds to date: " .$dSeconds. "</br>");
+    print("Minutes to date: " .$dMinutes. "</br>");
+    print("Hours to date: " .$dHours. "</br>");
+    }
+}
+
+
+
 
 
 ?>
@@ -113,9 +157,14 @@ function randomPassword() {
     }
     return implode($pass);
 }
- 
+
+
+
+
+if(isset($_POST['submitMail'])){
+    sendMail();
+}
 function sendMail(){
-    if(isset($_POST['submitMail'])){
     $to = $_POST["email"];
     $subject = "Login password";
     $txt = "Din password: ".randomPassword();
@@ -127,9 +176,7 @@ function sendMail(){
         else {
             echo "failed";
         }
-    }   
-}
-sendMail();
+}   
 
 ?>
         </article>
@@ -143,18 +190,18 @@ $cookie_value = "Spöket Laban";
 $cookie_date = date("d-m-Y H:i:s");
 
     
-function createCookie(){
-    setcookie($cookie_name, $cookie_value, $cookie_date, time() + (86400 * 2), "/");
-}
+// function createCookie(){
+//     setcookie($cookie_name, $cookie_value, $cookie_date, time() + (86400 * 2), "/");
+// }
 // if(isset($_COOKIE["username"])){
-createCookie();
-if($cookie_name= ""){
-    createCookie();
-}
-else{
-    print("<p> Välkommen " . $cookie_value . "!</p>");
-    print($cookie_date);
-}
+// createCookie();
+// if($cookie_name= ""){
+//     createCookie();
+// }
+// else{
+//     print("<p> Välkommen " . $cookie_value . "!</p>");
+//     print($cookie_date);
+// }
 
 
 ?>
